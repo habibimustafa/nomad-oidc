@@ -1,0 +1,74 @@
+name: "Nomad OIDC"
+description: "Get short-live Nomad Token through OIDC Authentication on Github Action."
+author: "Habibi Mustafa"
+
+inputs:
+  nomad_addr:
+    description: "Nomad HTTP address (e.g., https://nomad.example.com:4646)"
+    required: true
+  region:
+    description: "Optional Nomad region"
+    required: false
+    default: ""
+  namespace:
+    description: "Optional Nomad namespace"
+    required: false
+    default: ""
+  tls_skip_verify:
+    description: "Skip TLS verification (insecure)"
+    required: false
+    default: "false"
+  ca_pem:
+    description: "Optional CA certificate content (PEM)"
+    required: false
+    default: ""
+  client_cert:
+    description: "Optional client certificate content (PEM)"
+    required: false
+    default: ""
+  client_key:
+    description: "Optional client private key content (PEM)"
+    required: false
+    default: ""
+  oidc_audience:
+    description: "OIDC audience for token request (default: nomad.example.com)"
+    required: false
+    default: "nomad.example.com"
+  oidc_auth_method_name:
+    description: "The name of the ACL authentication method to use"
+    required: false
+    default: "github"
+  debug:
+    description: "Enable debug output for OIDC authentication responses"
+    required: false
+    default: "false"
+
+outputs:
+  nomad_token:
+    description: "Short live Nomad Token"
+    value: ${{ steps.oidc_auth.outputs.nomad_token }}
+
+runs:
+  using: composite
+  steps:
+    - name: Nomad OIDC
+      id: oidc_auth
+      shell: bash
+      env:
+        NOMAD_ADDR: ${{ inputs.nomad_addr }}
+        NOMAD_TOKEN: ${{ inputs.nomad_token }}
+        REGION: ${{ inputs.region }}
+        NAMESPACE: ${{ inputs.namespace }}
+        TLS_SKIP_VERIFY: ${{ inputs.tls_skip_verify }}
+        CA_PEM: ${{ inputs.ca_pem }}
+        CLIENT_CERT: ${{ inputs.client_cert }}
+        CLIENT_KEY: ${{ inputs.client_key }}
+        OIDC_AUDIENCE: ${{ inputs.oidc_audience }}
+        OIDC_AUTH_METHOD_NAME: ${{ inputs.oidc_auth_method_name }}
+        DEBUG: ${{ inputs.debug }}
+      run: |
+        bash "${{ github.action_path }}/scripts/main.sh"
+
+branding:
+  icon: unlock
+  color: green
