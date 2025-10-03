@@ -3,10 +3,6 @@
 source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 
 get_oidc_token() {
-  if [[ "${OIDC_ENABLE}" != "true" ]]; then
-    return 0
-  fi
-
   # Check if we're running in GitHub Actions
   if [[ -z "${ACTIONS_ID_TOKEN_REQUEST_TOKEN:-}" || -z "${ACTIONS_ID_TOKEN_REQUEST_URL:-}" ]]; then
     err "OIDC authentication requires GitHub Actions environment with id-token: write permission"
