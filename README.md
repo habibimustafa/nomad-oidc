@@ -22,7 +22,7 @@ Example workflow step to use Nomad OIDC:
 
 ```yaml
 jobs:
-  dispatch:
+  nomad-operation:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
