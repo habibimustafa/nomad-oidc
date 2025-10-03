@@ -47,12 +47,27 @@ jobs:
 - Set `debug: true` to see the raw Nomad authentication response
 - This helps diagnose jq parsing failures and authentication errors
 
-TLS Options
+**Encryption**
+- Set `encryption_password: ${{ secrets.ENCRYPTION_PASSWORD }}` to encrypt Nomad Token
+- Decrypt the Nomad Token using OpenSSL like below: 
+```yaml
+- name: Decrypt nomad token
+  id: decrypt-token
+  shell: bash
+  run: |
+    NOMAD_TOKEN=${{ needs.oidc-auth.outputs.nomad-token }};
+    BINARY_NOMAD_TOKEN=$(echo -n "$NOMAD_TOKEN" | base64 --decode);
+    DECRYPTED_NOMAD_TOKEN=$(echo -n "$BINARY_NOMAD_TOKEN" | openssl enc -aes-256-cbc -pbkdf2 -d -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
+    echo "nomad-token=$DECRYPTED_NOMAD_TOKEN" >> $GITHUB_OUTPUT
+```
+
+**TLS Options**
 - Set `tls_skip_verify: true` to bypass verification (not recommended for production).
 - Provide a CA certificate via `ca_pem: ${{ secrets.NOMAD_CA_PEM }}` to trust a custom CA.
 
 ## Notes
 - Requires `curl` and `jq` (available on ubuntu-latest runners).
+- Requires `openssl` and `base64` for encryption process.
 
 ## References
 - https://www.hashicorp.com/en/blog/nomad-jwt-auth-with-github-actions

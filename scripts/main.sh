@@ -27,6 +27,8 @@ require "nomad_addr" "$NOMAD_ADDR"
 # Check for required tools
 if ! command -v curl >/dev/null; then err "curl not found"; exit 2; fi
 if ! command -v jq >/dev/null; then err "jq not found"; exit 2; fi
+if ! command -v openssl >/dev/null; then err "jq not found"; exit 2; fi
+if ! command -v base64 >/dev/null; then err "jq not found"; exit 2; fi
 
 # Setup certificates and process meta data
 setup_certificates

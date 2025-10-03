@@ -38,6 +38,10 @@ inputs:
     description: "The name of the ACL authentication method to use"
     required: false
     default: "github"
+  encryption_password:
+    description: "Password value used for token encryption"
+    required: false
+    default: ""
   debug:
     description: "Enable debug output for OIDC authentication responses"
     required: false
@@ -65,6 +69,7 @@ runs:
         CLIENT_KEY: ${{ inputs.client_key }}
         OIDC_AUDIENCE: ${{ inputs.oidc_audience }}
         OIDC_AUTH_METHOD_NAME: ${{ inputs.oidc_auth_method_name }}
+        ENCRYPTION_PASSWORD: ${{ inputs.encryption_password }}
         DEBUG: ${{ inputs.debug }}
       run: |
         bash "${{ github.action_path }}/scripts/main.sh"
