@@ -56,8 +56,11 @@ jobs:
   shell: bash
   run: |
     NOMAD_TOKEN=${{ needs.oidc-auth.outputs.nomad-token }};
-    BINARY_NOMAD_TOKEN=$(echo -n "$NOMAD_TOKEN" | base64 --decode);
-    DECRYPTED_NOMAD_TOKEN=$(echo -n "$BINARY_NOMAD_TOKEN" | openssl enc -aes-256-cbc -pbkdf2 -d -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
+    BINARY_NOMAD_TOKEN=$(printf %s "$NOMAD_TOKEN" | base64 -d);
+    DECRYPTED_NOMAD_TOKEN=$(
+        printf %s "${BINARY_NOMAD_TOKEN}" |
+        openssl enc -aes-256-cbc -pbkdf2 -md sha256 -d -salt -pass pass:"${{ secrets.ENCRYPTION_PASSWORD }}"
+    );
     echo "nomad-token=$DECRYPTED_NOMAD_TOKEN" >> $GITHUB_OUTPUT
 ```
 

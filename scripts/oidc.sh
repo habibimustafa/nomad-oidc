@@ -75,8 +75,11 @@ get_oidc_token() {
   fi
 
   # Set the token for use by other scripts (with encryption)
-  BINARY_ENCRYPTED_NOMAD_TOKEN=$(echo -n "${nomad_token}" | openssl enc -aes-256-cbc -pbkdf2 -salt -k "${ENCRYPTION_PASSWORD}");
-  ENCRYPTED_NOMAD_TOKEN=$(echo -n "$BINARY_ENCRYPTED_NOMAD_TOKEN" | base64);
+  BINARY_ENCRYPTED_NOMAD_TOKEN=$(
+    printf %s "${nomad_token}" |
+    openssl enc -aes-256-cbc -pbkdf2 -md sha256 -salt -pass pass:"${ENCRYPTION_PASSWORD}"
+  )
+  ENCRYPTED_NOMAD_TOKEN=$(printf %s "$BINARY_ENCRYPTED_NOMAD_TOKEN" | base64 -w0)
   export NOMAD_TOKEN="${ENCRYPTED_NOMAD_TOKEN}"
   echo "nomad_token=${NOMAD_TOKEN}" >>"${GITHUB_OUTPUT}"
   note "Successfully authenticated with Nomad via OIDC"
