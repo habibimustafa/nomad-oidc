@@ -28,7 +28,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Get Nomad Token
         id: auth
-        uses: habibimustafa/nomad-oidc@v1
+        uses: habibimustafa/nomad-oidc@v1.0.1
         with:
           nomad_addr: ${{ secrets.NOMAD_ADDR }}
           region: ""
