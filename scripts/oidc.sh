@@ -69,6 +69,7 @@ get_oidc_token() {
   # Set the token for use by other scripts (without encryption)
   if [[ -z "${ENCRYPTION_PASSWORD}" ]]; then
     export NOMAD_TOKEN="${nomad_token}"
+    echo "::add-mask::${NOMAD_TOKEN}"
     echo "nomad_token=${NOMAD_TOKEN}" >>"${GITHUB_OUTPUT}"
     note "Successfully authenticated with Nomad via OIDC"
     return 0
@@ -81,6 +82,7 @@ get_oidc_token() {
     base64 -w0
   )
   export NOMAD_TOKEN="${ENCRYPTED_NOMAD_TOKEN}"
+  echo "::add-mask::${NOMAD_TOKEN}"
   echo "nomad_token=${NOMAD_TOKEN}" >>"${GITHUB_OUTPUT}"
   note "Successfully authenticated with Nomad via OIDC"
 }
